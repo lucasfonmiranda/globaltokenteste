@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import Flask, render_template, request, abort, session, redirect, jsonify
-# from firebase_token_generator import create_token #Firebase desactivate
 import sendgrid
 import json
 import os
@@ -23,12 +22,13 @@ class users(db.Model):
     name = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
     token = db.Column(db.String(120), unique=True)
-
-    def __init__(self, name, email, token):
+    ipadr = db.Column(db.String(100), unique=True)
+    
+    def __init__(self, name, email, token, ipadr):
         self.name = name
         self.email = email
         self.token = token
-
+        self.ipadr = ipadr
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 
@@ -46,12 +46,6 @@ def tokenteste():
 	}]}
 	return data
 
-# def tokenC(): #Firebase token desactivate
-# 	auth_payload = {"uid": "1", "auth_data": "foo", "other_auth_data": "bar"} # token generator with firebase
-# 	options = {"admin": True}
-# 	token = create_token("<AIzaSyARXSs-bBjRg4FGya6yV7opSEaHibywSj0>", auth_payload, options)
-# 	return token
-# 	return "<a href=" + token +">Clique Aqui</a>"
 	
 @app.route('/token/check', methods= ['POST', 'GET']) #Route to give all token query 
 def tokenverif():
@@ -62,6 +56,10 @@ def tokenverif():
 	# db.session.add(user)
 	# db.session.commit()
 	# return ("WORK GOOD")
+
+@app.route("/getip", methods=["GET"]) #function to get IP
+def getip():
+    return jsonify({'ip': request.remote_addr}), 200
 
 @app.route('/add/token-user', methods = ['POST', 'GET'])  #TEST FROM ADD NEW TOKEN AND USER TO BD
 def create_tok():
