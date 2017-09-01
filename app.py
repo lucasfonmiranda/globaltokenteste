@@ -63,15 +63,19 @@ def tokenverif():
 	# db.session.commit()
 	# return ("WORK GOOD")
 
-@app.route('/add/token-user', methods = ['POST'])  #TEST FROM ADD NEW TOKEN AND USER TO BD
+@app.route('/add/token-user', methods = ['POST', 'GET'])  #TEST FROM ADD NEW TOKEN AND USER TO BD
 def create_tok():
-	if not reques.json or not'name' in request.json:
+	if not request.json or not'name' in request.json:
 		abort(400)
 	user = users(request.json.name, request.json.get('email', ''), request.json.get('token', + token()))
 	db.session.add(user)
 	db.session.commit()
 	return jsonify({'users': user}), 201
 
+@app.route('/alltokens', methods=['POST']) #test to show all tokens in one
+def index():
+	user = users.query.all()
+	return jsonify({'users: ' + user})
 
 @app.route('/', methods=['POST'])
 def sendMail():
