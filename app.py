@@ -2,6 +2,7 @@ from flask import Flask
 from flask import Flask, render_template, request, abort, session, redirect, jsonify
 import sendgrid
 import json
+import datetime
 import os
 import string
 from sendgrid.helpers.mail import *
@@ -23,14 +24,21 @@ class users(db.Model):
     email = db.Column(db.String(120), unique=True)
     token = db.Column(db.String(120), unique=True)
     ipadr = db.Column(db.String(100), unique=True)
+    data = db.Column(db.String(120), unique=True)
     
-    def __init__(self, name, email, token, ipadr):
+    def __init__(self, name, email, token, ipadr, data):
         self.name = name
         self.email = email
         self.token = token
         self.ipadr = ipadr
+        self.data = data
 
 app = Flask(__name__, static_folder='public', static_url_path='')
+
+@app.route('/datetime', methods =['GET'])
+def dateTime():
+	now = datetime.datetime.now()
+	return now
 
 @app.route('/check', methods = ['POST'])
 def token():
@@ -78,7 +86,7 @@ def index():
 @app.route('/', methods=['POST'])
 def sendMail():
 	token()
-	sg = sendgrid.SendGridAPIClient(apikey='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')
+	sg = sendgrid.SendGridAPIClient(apikey='KEY')
 	data = {
 	"personalizations": [
 	    {
