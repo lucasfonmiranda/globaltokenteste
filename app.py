@@ -2,7 +2,8 @@ from flask import Flask
 from flask import Flask, render_template, request, abort, session, redirect, jsonify
 import sendgrid
 import json
-import datetime
+import time
+from datetime import datetime, date, time 
 import os
 import string
 from sendgrid.helpers.mail import *
@@ -13,8 +14,9 @@ import  binascii
 
 
 app=Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///solidareasy.sqlite3' #access bd in SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///solidareasyteste.sqlite3' #access bd in SQLAlchemy
 app.config['SECRET_KEY'] = 'random string'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
@@ -23,15 +25,15 @@ class users(db.Model):
     name = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
     token = db.Column(db.String(120), unique=True)
-    ipadr = db.Column(db.String(100), unique=True)
+    ipad = db.Column(db.String(100), unique=True)
     data = db.Column(db.String(120), unique=True)
     
-    def __init__(self, name, email, token, ipadr, data):
+    def __init__(self, name, email, token, ipad, data):
         self.name = name
         self.email = email
         self.token = token
-        self.ipadr = ipadr
-        self.data = data
+        self.ipad = ipad
+        self.data = datetime.datetime.strptime(data, "%d%m%Y").date()
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 
@@ -73,12 +75,13 @@ def getip():
 def create_tok():
 	if not request.json or not'name' in request.json:
 		abort(400)
-	user = users(request.json.name, request.json.get('email', ''), request.json.get('token', + token()))
+	user = users(request.json.name, request.json.get('email', ''), request.json.get('token', + token(),
+		request.json.get('ipad', ''), request.json.get('data', '')))
 	db.session.add(user)
 	db.session.commit()
 	return jsonify({'users': user}), 201
 
-@app.route('/alltokens', methods=['POST']) #test to show all tokens in one
+@app.route('/alltokens', methods=['GET']) #test to show all tokens in one
 def index():
 	user = users.query.all()
 	return jsonify({'users: ' + user})
@@ -92,7 +95,7 @@ def sendMail():
 	    {
 	      "to": [
 	        {
-	          "email": "lucasfonmiranda@gmail.com"
+	          "email": + email()
 	        }
 	      ],
 	      "subject": "O link do seu video esta aqui"
