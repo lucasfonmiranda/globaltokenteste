@@ -49,10 +49,10 @@ def token():
 
 @app.route('/teste', methods = ['POST'])
 def tokenteste():
-	teste = token()
+	token()
 	data = { "token: "
 	[{
-		"tokens: " +  teste
+		"tokens: " +  token()
 	}]}
 	return data
 
@@ -61,11 +61,7 @@ def tokenteste():
 def tokenverif():
 	dev = users.query.get(id)
 	dev.token = request.json.get('token', dev.token)
-	# token()
-	# user = users(token())
-	# db.session.add(user)
-	# db.session.commit()
-	# return ("WORK GOOD")
+
 
 @app.route("/getip", methods=["GET"]) #function to get IP
 def getip():
@@ -86,7 +82,7 @@ def index():
 	user = users.query.all()
 	return jsonify({'users: ' + user})
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST']) #route to send email with the token
 def sendMail():
 	token()
 	sg = sendgrid.SendGridAPIClient(apikey='KEY')
