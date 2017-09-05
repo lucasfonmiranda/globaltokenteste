@@ -87,7 +87,7 @@ def index():
 @app.route('/', methods=['POST']) #route to send email with the token
 def sendMail():
 	token()
-	sg = sendgrid.SendGridAPIClient(apikey='KEY')
+	sg = sendgrid.SendGridAPIClient(apikey='KEY') #REMOVE the sendgrid key
 	data = {
 	"personalizations": [
 	    {
@@ -100,7 +100,7 @@ def sendMail():
 	    }
 	  ],
 	  "from": {
-	    "email": "contato@solidareasy.com"
+	    "email": ""
 	  },
 	  "content": [
 	    {
