@@ -12,7 +12,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 import os
 import  binascii
 
-
+"""
+Simple example to user SQLAlchemy with Python-Flask api.
+"""
 app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///solidareasyteste.sqlite3' #access bd in SQLAlchemy
 app.config['SECRET_KEY'] = 'random string'
@@ -20,13 +22,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-class users(db.Model):
+class users(db.Model): #Create DB user simple 
     id = db.Column('user_id', db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120), unique=True)
+    name = db.Column(db.String(80))
+    email = db.Column(db.String(120))
     token = db.Column(db.String(120), unique=True)
     ipad = db.Column(db.String(100), unique=True)
-    data = db.Column(db.String(120), unique=True)
+    data = db.Column(db.String(120))
     
     def __init__(self, name, email, token, ipad, data):
         self.name = name
